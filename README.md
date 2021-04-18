@@ -6,12 +6,9 @@ If you want Keras style `model.summary()` then [torchsummary][torchsummary-link]
 
 In that case `print(model)` does a decent job. But it does not prints more information about model. That is where `torchdescribe` comes in.
 
-## Install
-* `pip install torchdescribe`
-
 
 ## Usage
-* 
+*
     ```py
     from torchdescribe import describe
 
@@ -87,7 +84,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ```
     ```
     -------------------------------------------------------------
-                             CNN                             
+                             CNN
     -------------------------------------------------------------
     =============================================================
 
@@ -127,7 +124,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ```
     ```
     ------------------------------------------------------------------------------------
-                                            VGG                                         
+                                            VGG
     ------------------------------------------------------------------------------------
     ====================================================================================
 
@@ -220,7 +217,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ```
     ```
     -------------------------------------------------------------------------
-                                    Net                                   
+                                    Net
     -------------------------------------------------------------------------
     =========================================================================
 
@@ -258,7 +255,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     class Model(nn.Module, Describe):
         def __init__(self):
             super().__init__()
-            
+
             self.fc1 = nn.Sequential(
                 nn.Linear(in_features=1000, out_features=128),
                 nn.ReLU(inplace=True),
@@ -274,7 +271,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
                 nn.Linear(in_features=128, out_features=1000),
                 nn.Sigmoid()
             )
-        
+
         def forward(self, x):
             x = self.fc1(x)
             x = self.fc2(x)
@@ -285,7 +282,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ```
     ```
     --------------------------------------------------------------
-                                Model                             
+                                Model
     --------------------------------------------------------------
     ==============================================================
 
@@ -347,7 +344,7 @@ describe(rnn, (3, 6), suppress_error=True)
 ```
 ```
 --------------------------------------------------
-                       RNN                        
+                       RNN
 --------------------------------------------------
 ==================================================
 

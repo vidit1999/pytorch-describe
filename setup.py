@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-email = os.environ["USER_EMAIL"]
+email = os.environ.get("USER_EMAIL", "")
 description = "Describe PyTorch model in PyTorch way"
 
 try:
