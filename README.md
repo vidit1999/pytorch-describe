@@ -6,6 +6,14 @@ If you want Keras style `model.summary()` then [torchsummary][torchsummary-link]
 
 In that case `print(model)` does a decent job. But it does not prints more information about model. That is where `torchdescribe` comes in.
 
+## Install
+
+* From command line run,
+    ```
+    $ git clone https://github.com/vidit1999/pytorch-describe
+    $ cd pytorch-describe
+    $ python setup.py install
+    ```
 
 ## Usage
 *
