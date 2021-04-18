@@ -8,12 +8,6 @@ In that case `print(model)` does a decent job. But it does not prints more infor
 
 ## Install
 * `pip install torchdescribe`
-* Or from terminal,
-    ```
-    $ git clone https://github.com/vidit1999/pytorch-describe
-    $ cd pytorch-describe
-    $ python setup.py install
-    ```
 
 
 ## Usage
@@ -71,22 +65,22 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     class CNN(nn.Module):
-    def __init__(self):
-        super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
-        self.conv2 = nn.Conv2d(32, 32, kernel_size=5)
-        self.conv3 = nn.Conv2d(32,64, kernel_size=5)
-        self.fc1 = nn.Linear(3*3*64, 256)
-        self.fc2 = nn.Linear(256, 10)
+        def __init__(self):
+            super(CNN, self).__init__()
+            self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
+            self.conv2 = nn.Conv2d(32, 32, kernel_size=5)
+            self.conv3 = nn.Conv2d(32,64, kernel_size=5)
+            self.fc1 = nn.Linear(3*3*64, 256)
+            self.fc2 = nn.Linear(256, 10)
 
-    def forward(self, x):
-        x = torch.relu(self.conv1(x))
-        x = torch.relu(torch.max_pool2d(self.conv2(x), 2))
-        x = torch.relu(torch.max_pool2d(self.conv3(x),2))
-        x = x.view(-1,3*3*64 )
-        x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
-        return torch.log_softmax(x, dim=1)
+        def forward(self, x):
+            x = torch.relu(self.conv1(x))
+            x = torch.relu(torch.max_pool2d(self.conv2(x), 2))
+            x = torch.relu(torch.max_pool2d(self.conv3(x),2))
+            x = x.view(-1,3*3*64 )
+            x = torch.relu(self.fc1(x))
+            x = self.fc2(x)
+            return torch.log_softmax(x, dim=1)
 
     cnn = CNN().to(device)
     describe(model=cnn, input_shape=(1, 28, 28), batch_size=1000)
