@@ -139,4 +139,9 @@ cython_debug/
 
 
 # Custom
+
+# Ipython files
 *.ipynb
+
+# Test files
+*[tT]est*

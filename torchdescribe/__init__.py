@@ -3,37 +3,14 @@ Describe PyTorch model in PyTorch way
 
 *Documentation Link : https://github.com/vidit1999/pytorch-describe*
 
-Usages ::-
+Usage :
 
-1.
-    ```py
-    from torchdescribe import describe
-
-    input_shape = ... # input_shape(s) of model
-
-    class Model(nn.Module):
-        def __init__(self,...):
-            super(Model, self).__init__()
-
-            ...
-            # model attribute definations
-
-        ...
-        #  model methods
-        ...
-
-    model = Model()
-    describe(model, input_shape)
-    ```
-
-2. Or by inheriting `Describe Class`,
-
-```
-from torchdescribe import Describe
+```py
+from torchdescribe import describe
 
 input_shape = ... # input_shape(s) of model
 
-class Model(nn.Module, Describe):
+class Model(nn.Module):
     def __init__(self,...):
         super(Model, self).__init__()
 
@@ -45,10 +22,10 @@ class Model(nn.Module, Describe):
     ...
 
 model = Model()
-model.describe(input_shape)
+describe(model, input_shape)
 ```
 """
 
-from .torchdescribe import describe, Describe
+from .torchdescribe import describe
 
-__version__ = "1.0.0"
+__version__ = "0.0.1"

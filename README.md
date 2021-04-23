@@ -8,6 +8,11 @@ In that case `print(model)` does a decent job. But it does not prints more infor
 
 ## Install
 
+* Using `pip`,
+    ```
+    pip install torchdescribe
+    ```
+
 * From command line run,
     ```
     $ git clone https://github.com/vidit1999/pytorch-describe
@@ -16,47 +21,25 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ```
 
 ## Usage
-*
-    ```py
-    from torchdescribe import describe
+```py
+from torchdescribe import describe
 
-    input_shape = ... # input_shape(s) of model
+input_shape = ... # input_shape(s) of model
 
-    class Model(nn.Module):
-        def __init__(self,...):
-            super(Model, self).__init__()
-
-            ...
-            # model attribute definations
+class Model(nn.Module):
+    def __init__(self,...):
+        super(Model, self).__init__()
 
         ...
-        #  model methods
-        ...
+        # model attribute definations
 
-    model = Model()
-    describe(model, input_shape)
-    ```
-* Or by inheriting `Describe Class`,
+    ...
+    #  model methods
+    ...
 
-    ```py
-    from torchdescribe import Describe
-
-    input_shape = ... # input_shape(s) of model
-
-    class Model(nn.Module, Describe):
-        def __init__(self,...):
-            super(Model, self).__init__()
-
-            ...
-            # model attribute definations
-
-        ...
-        #  model methods
-        ...
-
-    model = Model()
-    model.describe(input_shape)
-    ```
+model = Model()
+describe(model, input_shape)
+```
 
 ## Examples
 
@@ -112,7 +95,8 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     -------------------------------------------------------------
     Model device : CPU
     Batch size : 1000
-    Input shape : (1, 28, 28)
+    Input shape : (1000, 1, 28, 28)
+    Output shape : (1000, 10)
     Input size (MB) : 2.99
     Forward/backward pass size (MB) : 257.97
     Params size (MB) : 0.87
@@ -122,6 +106,7 @@ In that case `print(model)` does a decent job. But it does not prints more infor
 
 1. ### **VGG-16**
     ```py
+    import torch
     from torchvision import models
     from torchdescribe import describe
 
@@ -190,7 +175,8 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     ------------------------------------------------------------------------------------
     Model device : CPU
     Batch size : 100
-    Input shape : (3, 224, 224)
+    Input shape : (100, 3, 224, 224)
+    Output shape : (100, 1000)
     Input size (MB) : 57.42
     Forward/backward pass size (MB) : 21878.87
     Params size (MB) : 527.79
@@ -245,137 +231,68 @@ In that case `print(model)` does a decent job. But it does not prints more infor
     -------------------------------------------------------------------------
     Model device : CPU
     Batch size : 500
-    Input shape : [(1, 16, 16), (1, 28, 28)]
+    Input shape : [(500, 1, 16, 16), (500, 1, 28, 28)]
+    Output shape : [(500, 1024), (500, 3136)]
     Input size (MB) : 1.98
     Forward/backward pass size (MB) : 63.48
     Params size (MB) : 0.00
     Estimated Total Size (MB) : 65.46
     -------------------------------------------------------------------------
     ```
-1. ### **Using `Describe` Class**
+
+1. ### **To Suppress Errors**
     ```py
     import torch
     import torch.nn as nn
-    from torchdescribe import Describe
+    from torchdescribe import describe
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    class Model(nn.Module, Describe):
+    class RNN(nn.Module):
         def __init__(self):
-            super().__init__()
+            super(RNN, self).__init__()
+            self.hidden_size = 20
 
-            self.fc1 = nn.Sequential(
-                nn.Linear(in_features=1000, out_features=128),
-                nn.ReLU(inplace=True),
+            self.embedding = nn.Embedding(10, 20)
+            self.gru = nn.GRU(20, 20)
 
-                nn.Linear(in_features=128, out_features=1000),
-                nn.Sigmoid()
-            )
+        def forward(self, input, hidden):
+            embedded = self.embedding(input).view(1, 1, -1)
+            output = embedded
+            output, hidden = self.gru(output, hidden)
+            return output, hidden
 
-            self.fc2 = nn.Sequential(
-                nn.Linear(in_features=1000, out_features=128),
-                nn.ReLU(inplace=True),
 
-                nn.Linear(in_features=128, out_features=1000),
-                nn.Sigmoid()
-            )
-
-        def forward(self, x):
-            x = self.fc1(x)
-            x = self.fc2(x)
-            return x
-
-    model = Model()
-    model.describe((1000,), 1000)
+    rnn = RNN().to(device)
+    describe(rnn, (3, 6), suppress_error=True)
     ```
     ```
-    --------------------------------------------------------------
-                                Model
-    --------------------------------------------------------------
-    ==============================================================
+    --------------------------------------------------
+                        RNN
+    --------------------------------------------------
+    ==================================================
 
-    Model(
-        (fc1): Sequential(
-            (0): Linear(in_features=1000, out_features=128, bias=True)
-            (1): ReLU(inplace=True)
-            (2): Linear(in_features=128, out_features=1000, bias=True)
-            (3): Sigmoid()
-        )
-        (fc2): Sequential(
-            (0): Linear(in_features=1000, out_features=128, bias=True)
-            (1): ReLU(inplace=True)
-            (2): Linear(in_features=128, out_features=1000, bias=True)
-            (3): Sigmoid()
-        )
+    RNN(
+        (embedding): Embedding(10, 20)
+        (gru): GRU(20, 20)
     )
 
-    ==============================================================
-    --------------------------------------------------------------
-    Total parameters : 514,256
-    Trainable parameters : 514,256
+    ==================================================
+    --------------------------------------------------
+    Total parameters : 2,720
+    Trainable parameters : 2,720
     Non-trainable parameters : 0
-    --------------------------------------------------------------
+    --------------------------------------------------
     Model device : CPU
-    Batch size : 1000
-    Input shape : (1000,)
-    Input size (MB) : 3.81
-    Forward/backward pass size (MB) : 42.05
-    Params size (MB) : 1.96
-    Estimated Total Size (MB) : 47.83
-    --------------------------------------------------------------
+    Batch size : 1
+    Input shape : (1, 3, 6)
+    Output shape : []
+    Input size (MB) : -1
+    Forward/backward pass size (MB) : -1
+    Params size (MB) : 0.01
+    Estimated Total Size (MB) : -1
+    --------------------------------------------------
     ```
-1. ### **To Suppress Errors**
-```py
-import torch
-import torch.nn as nn
-from torchdescribe import describe
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-class RNN(nn.Module):
-    def __init__(self):
-        super(RNN, self).__init__()
-        self.hidden_size = 20
-
-        self.embedding = nn.Embedding(10, 20)
-        self.gru = nn.GRU(20, 20)
-
-    def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        output, hidden = self.gru(output, hidden)
-        return output, hidden
-
-
-rnn = RNN().to(device)
-describe(rnn, (3, 6), suppress_error=True)
-```
-```
---------------------------------------------------
-                       RNN
---------------------------------------------------
-==================================================
-
-RNN(
-  (embedding): Embedding(10, 20)
-  (gru): GRU(20, 20)
-)
-
-==================================================
---------------------------------------------------
-Total parameters : 2,720
-Trainable parameters : 2,720
-Non-trainable parameters : 0
---------------------------------------------------
-Model device : CPU
-Batch size : 1
-Input shape : (3, 6)
-Input size (MB) : -1
-Forward/backward pass size (MB) : -1
-Params size (MB) : 0.01
-Estimated Total Size (MB) : -1
---------------------------------------------------
-```
 
 ## References
 * For Model Size Estimation help is taken from [here][model-size-estimation].
